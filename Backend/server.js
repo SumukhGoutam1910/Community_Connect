@@ -115,11 +115,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Basic routes
-app.get('/', (req, res) => {
-    res.json({ message: 'Community Connect Backend API', status: 'running' });
-});
-
+// Health check route (keep this for API health)
 app.get('/api/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
@@ -442,7 +438,8 @@ app.put('/api/posts/:id', async (req, res) => {
 });
 
 
-// Serve React frontend build as static files
+
+// Serve React frontend build as static files (must be after all API routes)
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -451,7 +448,6 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.static(path.join(__dirname, "build")));
 
-// For any route not handled by API, serve React index.html
 // Catch-all for non-API routes (Express 5+ safe)
 app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, "build", "index.html"));
