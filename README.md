@@ -249,6 +249,167 @@ We welcome contributions to Community Connect! Please follow these steps:
 - Add tests for new features
 - Update documentation as needed
 
+## Deployment
+
+### Deploy on Render
+
+This application can be deployed on Render using the following steps:
+
+#### Prerequisites for Deployment
+- GitHub repository with your code
+- MongoDB Atlas account (for cloud database)
+- Cloudinary account (for media storage)
+
+#### Backend Deployment on Render
+
+1. **Prepare your backend for production:**
+
+Update your `Backend/server.js` to use environment PORT:
+```javascript
+const port = process.env.PORT || 3001;
+```
+
+2. **Create a Web Service on Render:**
+   - Connect your GitHub repository
+   - Choose the `Backend` folder as the root directory
+   - Set the following configuration:
+
+**Build Command:**
+```bash
+npm install
+```
+
+**Start Command:**
+```bash
+npm start
+```
+
+**Environment Variables to set in Render:**
+```
+NODE_ENV=production
+MONGODB_URI=your_mongodb_atlas_connection_string
+SESSION_SECRET=your_secure_session_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret
+FRONTEND_URL=https://your-frontend-app.onrender.com
+BACKEND_URL=https://your-backend-app.onrender.com
+PORT=10000
+```
+
+#### Frontend Deployment on Render
+
+1. **Update Frontend API endpoints:**
+
+Create a production build configuration in your React app. Update your API calls to point to your deployed backend URL.
+
+2. **Create a Static Site on Render:**
+   - Choose the `Frontend` folder as the root directory
+   - Set the following configuration:
+
+**Build Command:**
+```bash
+npm install && npm run build
+```
+
+**Publish Directory:**
+```
+build
+```
+
+**Environment Variables (if needed):**
+```
+REACT_APP_API_URL=https://your-backend-app.onrender.com
+```
+
+#### Alternative: Full-Stack Deployment
+
+For a single deployment, you can serve your React app from your Express server:
+
+1. **Modify your backend package.json:**
+```json
+{
+  "scripts": {
+    "start": "node server.js",
+    "build": "cd ../Frontend && npm install && npm run build && cp -r build ../Backend/",
+    "heroku-postbuild": "npm run build"
+  }
+}
+```
+
+2. **Update your server.js to serve static files:**
+```javascript
+// Serve static files from React build
+app.use(express.static('build'));
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+```
+
+3. **Render Configuration for Full-Stack:**
+   - Root directory: `/`
+   - Build command: `cd Backend && npm install && npm run build`
+   - Start command: `cd Backend && npm start`
+
+#### Database Setup (MongoDB Atlas)
+
+1. Create a MongoDB Atlas cluster
+2. Get your connection string
+3. Add your Render IP to the allowed IP addresses (or use 0.0.0.0/0 for all IPs)
+4. Set the MONGODB_URI environment variable in Render
+
+#### Post-Deployment Steps
+
+1. **Update CORS settings** in your backend to include your Render domain:
+```javascript
+app.use(cors({
+    origin: [
+        "http://localhost:3000", 
+        "https://your-frontend-app.onrender.com",
+        "https://your-backend-app.onrender.com"
+    ], 
+    credentials: true
+}));
+```
+
+2. **Test all functionality** after deployment
+3. **Monitor logs** in Render dashboard for any issues
+
+#### Build Commands Summary
+
+**For Backend only:**
+```bash
+# In Backend directory
+npm install
+npm start
+```
+
+**For Frontend only:**
+```bash
+# In Frontend directory
+npm install
+npm run build
+```
+
+**For Full-Stack deployment:**
+```bash
+# Build command
+cd Backend && npm install && cd ../Frontend && npm install && npm run build && cp -r build ../Backend/
+
+# Start command
+cd Backend && npm start
+```
+
+#### Troubleshooting Deployment
+
+- Check Render logs for error messages
+- Ensure all environment variables are set correctly
+- Verify database connection strings
+- Check CORS configuration
+- Ensure file paths are correct in production
+
 ## License
 
 This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
