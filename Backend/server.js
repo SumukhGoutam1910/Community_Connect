@@ -452,7 +452,8 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "build")));
 
 // For any route not handled by API, serve React index.html
-app.get("*", (req, res) => {
+// Catch-all for non-API routes (Express 5+ safe)
+app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
