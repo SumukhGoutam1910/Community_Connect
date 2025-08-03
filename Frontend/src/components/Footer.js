@@ -43,7 +43,7 @@ const Footer = () => {
       </LinksCol>
       </FooterInner>
       <Copyright>
-        © {new Date().getFullYear()} CommunityConnect. All rights reserved.
+        © {new Date().getFullYear()} Sumukh Goutam. All rights reserved.
       </Copyright>
     </FooterContainer>
   );

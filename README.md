@@ -271,4 +271,4 @@ If you have any questions or need support, please:
 
 ---
 
-**Built with ❤️ by the Community Connect Team**
+**Built by Sumukh Goutam**
